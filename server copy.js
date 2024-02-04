@@ -1,15 +1,14 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 mongoose.connect('mongodb+srv://anandhost:DYNGf7KKE0dGFs9Z@recluster.dawqed5.mongodb.net/userDB', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
 
-app.use(express.json()); // for parsing application/json
-
-const bcrypt = require('bcryptjs');
+app.use(express.json());
 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
@@ -17,7 +16,7 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true }
 });
 
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 8);
     }
